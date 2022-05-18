@@ -4,6 +4,7 @@ const PORT = 3000;
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const bodyParser = require("body-parser");
+const config = require("./config/key");
 
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,9 +30,7 @@ app.listen(PORT, () => {
 
 async function server() {
   try {
-    const sv = await mongoose.connect(
-      "mongodb+srv://dongs:ehdgus1234@2022-05-18.3egwy.mongodb.net/?retryWrites=true&w=majority"
-    );
+    const sv = await mongoose.connect(config.MONGO_URI);
     console.log("Success");
   } catch {
     console.log("Error !!!!!!");
