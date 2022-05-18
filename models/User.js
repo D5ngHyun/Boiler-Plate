@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const userSchema = new Shema({
+const userSchema = new Schema({
   name: {
     type: String,
     maxLength: 50,
