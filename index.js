@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => res.send("Boiler Plate"));
-app.post("/api/register", (req, res) => {
+app.post("/api/users/register", (req, res) => {
   const user = new User(req.body);
 
   console.log(req.body);
@@ -28,7 +28,7 @@ app.post("/api/register", (req, res) => {
     return res.status(200).json({ success: true });
   });
 });
-app.post("/api/login", (req, res) => {
+app.post("/api/users/login", (req, res) => {
   // 요청된 이메일을 데이터베이스에 있는지 찾는다.
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -63,7 +63,7 @@ app.post("/api/login", (req, res) => {
 
 app.get("/api/users/auth", auth, (req, res) => {
   //
-
+  console.log(req);
   res.status(200).json({
     _id: req.user._id,
     isAdmin: req.user.role === 0 ? false : true,
@@ -73,6 +73,15 @@ app.get("/api/users/auth", auth, (req, res) => {
     lastName: req.user.lastName,
     role: req.user.role,
     image: req.user.image,
+  });
+});
+
+app.get("/api/users/logout", auth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).send({
+      success: true,
+    });
   });
 });
 
