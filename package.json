@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -e js,html ./server/index.js"
+    "backend": "nodemon -e js,html ./server/index.js",
+    "front": "npm --cwd client start",
+    "dev": "concurrently \"npm run backend\" \"npm start --prefix client\""
   },
   "keywords": [],
   "author": "",
@@ -12,6 +14,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
+    "concurrently": "^7.2.0",
     "cookie-parser": "^1.4.6",
     "express": "^4.18.1",
     "http-proxy-middleware": "^2.0.6",
