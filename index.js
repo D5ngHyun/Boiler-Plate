@@ -5,9 +5,11 @@ const mongoose = require("mongoose");
 const User = require("./models/User");
 const bodyParser = require("body-parser");
 const config = require("./config/key");
+const cookieParser = require("cookie-parser");
 
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 //application/json
 app.use(bodyParser.json());
 
@@ -15,9 +17,11 @@ app.get("/", (req, res) => res.send("Boiler Plate"));
 app.post("/register", (req, res) => {
   const user = new User(req.body);
 
+  console.log(req.body);
+
   user.save((err, doc) => {
     if (err) {
-      return res.json({ success: false }, err);
+      return res.json({ success: false, err });
     }
 
     return res.status(200).json({ success: true });
@@ -25,7 +29,7 @@ app.post("/register", (req, res) => {
 });
 app.post("/login", (req, res) => {
   // 요청된 이메일을 데이터베이스에 있는지 찾는다.
-  User.findeOne({ email: req.body.email }, (err, user) => {
+  User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
       return res.json({
         loginSuccess: false,
@@ -41,10 +45,19 @@ app.post("/login", (req, res) => {
           message: "비밀번호가 틀렸습니다.",
         });
       }
+
+      // 비밀번호까지 맞다면 토큰 생성.
+      user.generateToken((err, user) => {
+        if (err) return res.status(400).send(err);
+        // 토큰을 저장한다.
+
+        res
+          .cookie("x_auth", user.token)
+          .status(200)
+          .json({ loginSuccess: true, userId: user._id });
+      });
     });
   });
-
-  // 비밀번호까지 맞다면 토큰 생성.
 });
 
 app.listen(PORT, () => {

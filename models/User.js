@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { Schema } = mongoose;
 const saltRounds = 10;
 // const myPlaintextPassword = "s0//P4$$w0rD";
@@ -64,6 +65,19 @@ userSchema.methods.comparePassword = function (plainPassword, cb) {
   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
     if (err) return cb(err);
     cb(null, isMatch);
+  });
+};
+
+userSchema.methods.generateToken = function (cb) {
+  const user = this;
+  // jsonWebToken을 사용해서 토큰 생성하기
+
+  const token = jwt.sign(user._id.toHexString(), "secretToken");
+
+  user.token = token;
+  user.save(function (err, user) {
+    if (err) return cb(err);
+    cb(null, user);
   });
 };
 
