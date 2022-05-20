@@ -6,6 +6,7 @@ const User = require("./models/User");
 const bodyParser = require("body-parser");
 const config = require("./config/key");
 const cookieParser = require("cookie-parser");
+const auth = require("./middleware/auth");
 
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,7 +15,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => res.send("Boiler Plate"));
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
   const user = new User(req.body);
 
   console.log(req.body);
@@ -27,7 +28,7 @@ app.post("/register", (req, res) => {
     return res.status(200).json({ success: true });
   });
 });
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
   // 요청된 이메일을 데이터베이스에 있는지 찾는다.
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -57,6 +58,21 @@ app.post("/login", (req, res) => {
           .json({ loginSuccess: true, userId: user._id });
       });
     });
+  });
+});
+
+app.get("/api/users/auth", auth, (req, res) => {
+  //
+
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastName: req.user.lastName,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
