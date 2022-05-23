@@ -3,7 +3,16 @@ import { Routes, Route, Link } from "react-router-dom";
 import LandingPage from './components/views/LandingPage/LandingPage';
 import LoginPage from './components/views/LoginPage/LoginPage';
 import RegisterPage from './components/views/RegisterPage/RegisterPage';
+import Auth from './hoc/auth';
+
+
+
+
 function App() {
+  const AuthLandingPage = Auth(LandingPage, null);
+  const AuthLoginPage = Auth(LoginPage, false);
+  const AuthRegistserPage = Auth(RegisterPage, false);
+
   return (
     <>
       <nav>
@@ -21,9 +30,10 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/" element={<AuthLandingPage />} />
+        {/* <Route path="/" element={<LandingPage />} /> */}
+        <Route path="/login" element={<AuthLoginPage />} />
+        <Route path="/register" element={<AuthRegistserPage />} />
       </Routes>
     </>
   )

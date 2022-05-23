@@ -63,7 +63,6 @@ app.post("/api/users/login", (req, res) => {
 });
 
 app.get("/api/users/auth", auth, (req, res) => {
-  //
   console.log(req);
   res.status(200).json({
     _id: req.user._id,
